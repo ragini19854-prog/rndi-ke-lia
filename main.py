@@ -7,7 +7,7 @@ from pyrogram.errors import Unauthorized
 from config import API_ID, API_HASH, BOT_TOKENS, LOGGER, WORKERS, LOG_GROUP_ID
 
 # 🔥 MAIN FIX: Database ab Core folder se aayega
-from Core import database  
+from core import database  
 
 # ==========================================
 # ⚡ UVLOOP INSTALLATION (C++ LEVEL SPEED)

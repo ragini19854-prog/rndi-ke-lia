@@ -1,0 +1,17 @@
+# --- Core Bot Engine ---
+pyrogram
+tgcrypto
+
+# --- Database & Env ---
+motor
+python-dotenv
+dnspython
+
+# --- Quantum Speed & Network ---
+uvloop
+aiohttp
+
+# --- System Health & Utilities ---
+psutil
+APScheduler
+Pillow

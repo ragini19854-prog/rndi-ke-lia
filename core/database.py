@@ -10,13 +10,13 @@ try:
         LOGGER.info("⚡ Connecting to MongoDB Matrix...")
         mongo: AgnosticClient = AsyncIOMotorClient(MONGO_DB_URI, serverSelectionTimeoutMS=5000)
         db = mongo["YUKI_MULTI_MATRIX"]
-        
+
         # 🗃️ Collections (Tables)
         usersdb = db["users"]
         sudoersdb = db["sudoers"]
         blacklistdb = db["blacklist"]
         settingsdb = db["settings"] # Start Media ke liye zaroori!
-        
+
         LOGGER.info("✅ MongoDB Matrix Connected & Synced!")
     else:
         db = None
@@ -51,6 +51,11 @@ async def add_sudo_db(user_id: int):
     if sudoersdb is None: return
     if not await is_sudo_db(user_id):
         await sudoersdb.insert_one({"user_id": user_id})
+
+# 🔥 FIX: Sudo Delete Function (Required for /delsudobot)
+async def del_sudo_db(user_id: int):
+    if sudoersdb is None: return
+    await sudoersdb.delete_one({"user_id": user_id})
 
 async def get_all_sudoers():
     if sudoersdb is None: return []

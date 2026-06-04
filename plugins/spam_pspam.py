@@ -1,7 +1,7 @@
 import asyncio
 import random
 from pyrogram import Client, filters, enums
-from pyrogram.errors import FloodWait
+from pyrogram.errors import FloodWait, ChatWriteForbidden, UserRestricted
 
 # ☠️ MONSTER MULTI-BOTS IMPORTS 
 from core import database
@@ -35,13 +35,15 @@ async def check_sudo(user_id):
     return await database.is_sudo_db(user_id)
 
 # ==========================================
-# ⚡ PARALLEL EXECUTION ENGINE (WITH EMERGENCY BRAKES)
+# ⚡ ADVANCED PARALLEL EXECUTION ENGINE (SMART BYPASS)
 # ==========================================
 async def fire_message(client, chat_id, text):
     try:
         await client.send_message(chat_id, text)
     except FloodWait as fw:
         await asyncio.sleep(fw.value)
+    except (ChatWriteForbidden, UserRestricted):
+        SPAM_RUNNING[chat_id] = False # 🔥 Smart Mute Detection (Admin bypass)
     except Exception:
         pass
 
@@ -50,6 +52,8 @@ async def fire_copy(client, chat_id, message_id):
         await client.copy_message(chat_id, chat_id, message_id)
     except FloodWait as fw:
         await asyncio.sleep(fw.value)
+    except (ChatWriteForbidden, UserRestricted):
+        SPAM_RUNNING[chat_id] = False # 🔥 Smart Mute Detection (Admin bypass)
     except Exception:
         pass
 
@@ -62,6 +66,8 @@ async def fire_media(client, chat_id, media_type, file_id):
         elif media_type == "document": await client.send_document(chat_id, file_id)
     except FloodWait as fw:
         await asyncio.sleep(fw.value)
+    except (ChatWriteForbidden, UserRestricted):
+        SPAM_RUNNING[chat_id] = False # 🔥 Smart Media Restrict Detection
     except Exception:
         pass
 

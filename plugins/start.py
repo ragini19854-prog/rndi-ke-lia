@@ -3,7 +3,7 @@ import psutil
 from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from pyrogram.errors import MessageNotModified
-from Core import database
+from core import database
 from config import OWNER_ID, SUDO_USERS, LOGGER
 
 # ==========================================

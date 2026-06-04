@@ -3,10 +3,9 @@ import random
 from pyrogram import Client, filters, enums
 from pyrogram.errors import FloodWait
 
-# ☠️ MONSTER MULTI-BOTS IMPORTS (NO NOBITA_MUSIC!)
+# ☠️ MONSTER MULTI-BOTS IMPORTS 
 from core import database
 from config import OWNER_ID
-# Assuming db is initialized in core.database, import it directly
 from core.database import db 
 
 # ==========================================
@@ -18,15 +17,17 @@ E_WARN  = "<emoji id='5188463524568926712'>⚠️</emoji>"
 E_CHECK = "<emoji id='5431757423134121353'>✅</emoji>"
 E_FLASH = "<emoji id='5345905193005371012'>⚡️</emoji>"
 E_LOCK  = "<emoji id='6115973347206501819'>🔒</emoji>"
+E_STOP  = "<emoji id='6131813839429177098'>🚫</emoji>"
 
 # ☠️ PSPAM DATABASE COLLECTION ☠️
 pspam_db = db["pspam_ammo"] if db is not None else None
 
-# 🧠 IN-MEMORY STATE FOR /addpspam
+# 🧠 IN-MEMORY STATES
 ADD_PSPAM_STATE = {}
+SPAM_RUNNING = {} # 🔥 Naya Switch Spam Rokne Ke Liye
 
 # ==========================================
-# 🛡️ ꜱᴜᴅᴏ ᴄʜᴇᴄᴋᴇʀ ꜰᴜɴᴄᴛɪᴏɴ (Owner + MongoDB)
+# 🛡️ ꜱᴜᴅᴏ ᴄʜᴇᴄᴋᴇʀ ꜰᴜɴᴄᴛɪᴏɴ 
 # ==========================================
 async def check_sudo(user_id):
     if user_id == OWNER_ID:
@@ -34,7 +35,7 @@ async def check_sudo(user_id):
     return await database.is_sudo_db(user_id)
 
 # ==========================================
-# ⚡ PARALLEL EXECUTION ENGINE (ZERO-DELAY)
+# ⚡ PARALLEL EXECUTION ENGINE (WITH EMERGENCY BRAKES)
 # ==========================================
 async def fire_message(client, chat_id, text):
     try:
@@ -65,6 +66,23 @@ async def fire_media(client, chat_id, media_type, file_id):
         pass
 
 # ==========================================
+# 🛑 EMERGENCY BRAKES COMMAND (/stopspam & /stoppspam)
+# ==========================================
+@Client.on_message(filters.command(["stopspam", "stoppspam"]))
+async def stop_spam_cmd(client, message):
+    user_id = message.from_user.id if message.from_user else 0
+    if not await check_sudo(user_id):
+        return await message.reply_text(f"<blockquote>{E_DEVIL} <b>ʙ ᴀ ᴀ ᴘ  ꜱ ᴇ  ꜱ ᴜ ᴅ ᴏ  ʟ ᴇ  ᴘ ᴇ ʜ ʟ ᴇ  ʟ ᴏ ᴅ ᴇ ! 🖕</b></blockquote>", parse_mode=enums.ParseMode.HTML)
+
+    chat_id = message.chat.id
+    if SPAM_RUNNING.get(chat_id, False):
+        SPAM_RUNNING[chat_id] = False
+        await message.reply_text(f"<blockquote>{E_STOP} <b>ꜱ ᴘ ᴀ ᴍ  ꜱ ᴛ ᴏ ᴘ ᴘ ᴇ ᴅ  ꜱ ᴜ ᴄ ᴄ ᴇ ꜱ ꜱ ꜰ ᴜ ʟ ʟ ʏ !</b></blockquote>", parse_mode=enums.ParseMode.HTML)
+    else:
+        await message.reply_text(f"<blockquote>{E_WARN} <b>ᴋ ᴏ ɪ  ꜱ ᴘ ᴀ ᴍ  ɴ ᴀ ʜ ɪ ɴ  ᴄ ʜ ᴀ ʟ  ʀ ᴀ ʜ ᴀ !</b></blockquote>", parse_mode=enums.ParseMode.HTML)
+
+
+# ==========================================
 # ☢️ 1. NORMAL SPAM COMMAND (/spam)
 # ==========================================
 @Client.on_message(filters.command("spam"))
@@ -82,18 +100,22 @@ async def normal_spam(client, message):
         return await message.reply_text(f"<blockquote>{E_DEVIL} ᴀ ʙ ᴇ  ɴ ᴀ ʟ ʟ ᴇ ,  ᴄ ᴏ ᴜ ɴ ᴛ  ɴ ᴜ ᴍ ʙ ᴇ ʀ  ᴍ ᴇɪ ɴ  ᴅ ᴀ ʟ !</blockquote>", parse_mode=enums.ParseMode.HTML)
 
     chat_id = message.chat.id
-    tasks = []
+    SPAM_RUNNING[chat_id] = True # 🔥 Switch ON
 
     if message.reply_to_message:
         msg_id = message.reply_to_message.id
         for _ in range(count):
-            tasks.append(fire_copy(client, chat_id, msg_id))
+            if not SPAM_RUNNING.get(chat_id, False): break
+            asyncio.create_task(fire_copy(client, chat_id, msg_id))
+            await asyncio.sleep(0.05) # Micro-delay for stop command checking
     else:
         text = message.text.split(None, 2)[2]
         for _ in range(count):
-            tasks.append(fire_message(client, chat_id, text))
+            if not SPAM_RUNNING.get(chat_id, False): break
+            asyncio.create_task(fire_message(client, chat_id, text))
+            await asyncio.sleep(0.05)
 
-    await asyncio.gather(*tasks)
+    SPAM_RUNNING[chat_id] = False # Auto Switch OFF after loop
 
 
 # ==========================================
@@ -133,11 +155,8 @@ async def toggle_pspam_loader(client, message):
 )
 async def stealth_media_catcher(client, message):
     user_id = message.from_user.id if message.from_user else 0
-    
-    # 🔥 Check Sudo and State without blocking other messages (No roast needed here)
     if not ADD_PSPAM_STATE.get(user_id, False) or pspam_db is None:
         return
-        
     if not await check_sudo(user_id):
         return
 
@@ -179,10 +198,12 @@ async def premium_spam(client, message):
         return await message.reply_text(f"<blockquote>{E_DEVIL} ᴅ ᴀ ᴛ ᴀ ʙ ᴀ ꜱ ᴇ  ᴇ ᴍ ᴘ ᴛ ʏ !  ᴘ ᴇ ʜ ʟ ᴇ  <code>/addpspam on</code>  ᴋ ᴀ ʀ ᴋ ᴇ  ᴍ ᴀ ᴀ ʟ  ᴅ ᴀ ʟ !</blockquote>", parse_mode=enums.ParseMode.HTML)
 
     chat_id = message.chat.id
-    tasks = []
+    SPAM_RUNNING[chat_id] = True # 🔥 Switch ON
 
     for _ in range(count):
+        if not SPAM_RUNNING.get(chat_id, False): break # Check brake
         random_media = random.choice(all_ammo)
-        tasks.append(fire_media(client, chat_id, random_media["type"], random_media["file_id"]))
+        asyncio.create_task(fire_media(client, chat_id, random_media["type"], random_media["file_id"]))
+        await asyncio.sleep(0.05) # Micro-delay for stop command checking
 
-    await asyncio.gather(*tasks)
+    SPAM_RUNNING[chat_id] = False # Auto Switch OFF after loop

@@ -51,11 +51,11 @@ def get_all_commands():
     return sorted(list(commands))
 
 # ==========================================
-# 📑 PAGINATION BUILDER 
+# 📑 MONSTER TREE-STYLE PAGINATION BUILDER 
 # ==========================================
 def build_help_page(page_num, user_id):
     cmds = get_all_commands()
-    items_per_page = 12
+    items_per_page = 10 # 10 commands per page for a clean look
     total_pages = math.ceil(len(cmds) / items_per_page)
     
     if total_pages == 0:
@@ -69,28 +69,37 @@ def build_help_page(page_num, user_id):
     end_idx = start_idx + items_per_page
     page_cmds = cmds[start_idx:end_idx]
 
-    # 🎨 FORMATTING TEXT IN SMALL CAPS & HTML
-    text = f"<blockquote>{E_CROWN} <b>ᴛ ʜ ᴇ  ᴀ ɴ ᴜ  ᴍ ᴀ ᴛ ʀ ɪ x  ᴄ ᴏ ᴍ ᴍ ᴀ ɴ ᴅ ꜱ</b> {E_CROWN}\n"
-    text += f"━━━━━━━━━━━━━━━━━━\n"
-    for cmd in page_cmds:
-        text += f"{E_FLASH} <code>/{cmd}</code>\n"
-    text += f"━━━━━━━━━━━━━━━━━━\n"
-    text += f"<b>[ ᴘ ᴀ ɢ ᴇ : {page_num} / {total_pages} ]</b></blockquote>"
+    # 🎨 MONSTER BRANDING & TREE STYLE FORMATTING
+    text = f"<blockquote><b>╭━━ [ ᴍᴏɴꜱᴛᴇʀ ᴄᴏᴍᴍᴀɴᴅ ᴠᴀᴜʟᴛ ] ━━</b>\n"
+    text += f"<b>├ ᴏᴡɴᴇʀ ⇛</b> ᴀɴᴜ ᴍᴀᴛʀɪx {E_CROWN}\n"
+    text += f"<b>├ ꜱᴛᴀᴛᴜꜱ ⇛</b> ᴏɴʟɪɴᴇ ⚡\n"
+    text += f"<b>╰━━━━━━━━━━━━━━━━━━━━</b>\n\n"
+    
+    # 🌲 Tree Branches Logic
+    for i, cmd in enumerate(page_cmds):
+        if i == len(page_cmds) - 1: # Last branch
+            text += f"<b>╰ ⇛</b> <code>/{cmd}</code>\n"
+        else: # Middle branches
+            text += f"<b>├ ⇛</b> <code>/{cmd}</code>\n"
 
-    # 🎛️ BUTTONS LOGIC
+    # Footer
+    text += f"\n<b>╭━━ [ ᴘᴀɢᴇ : {page_num} / {total_pages} ] ━━</b>\n"
+    text += f"<b>╰ ⇛</b> <i>ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴏɴꜱᴛᴇʀ ᴇɴɢɪɴᴇ</i> 💀</blockquote>"
+
+    # 🎛️ BUTTONS LOGIC (Clean Small Caps)
     buttons = []
     nav_row = []
     
     if page_num > 1:
-        nav_row.append(InlineKeyboardButton("⏪ ʙ ᴀ ᴄ ᴋ", callback_data=f"help_prev_{page_num-1}_{user_id}"))
+        nav_row.append(InlineKeyboardButton("⏪ ʙᴀᴄᴋ", callback_data=f"help_prev_{page_num-1}_{user_id}"))
     
     if page_num < total_pages:
-        nav_row.append(InlineKeyboardButton("ɴ ᴇ x ᴛ ⏩", callback_data=f"help_next_{page_num+1}_{user_id}"))
+        nav_row.append(InlineKeyboardButton("ɴᴇxᴛ ⏩", callback_data=f"help_next_{page_num+1}_{user_id}"))
         
     if nav_row:
         buttons.append(nav_row)
         
-    buttons.append([InlineKeyboardButton("❌ ᴄ ʟ ᴏ ꜱ ᴇ", callback_data=f"help_close_{user_id}")])
+    buttons.append([InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data=f"help_close_{user_id}")])
 
     return text, InlineKeyboardMarkup(buttons)
 
@@ -103,7 +112,7 @@ async def live_help_command(client, message):
     
     # 🛑 Sudo Check
     if not await check_sudo(user_id):
-        return await message.reply_text(f"<blockquote>{E_DEVIL} <b>ᴀ ᴜ ᴋ ᴀ ᴀ ᴛ  ᴍ ᴇɪ ɴ  ʀ ᴇ ʜ  ʟ ᴏ ᴅ ᴇ ,  ʏ ᴇ ʜ  ꜱ ɪ ʀ ꜰ  ꜱ ᴜ ᴅ ᴏ  ᴋ ᴇ  ʟ ɪ ʏ ᴇ  ʜ ᴀ ɪ ! 🖕</b></blockquote>", parse_mode=enums.ParseMode.HTML)
+        return await message.reply_text(f"<blockquote>{E_DEVIL} <b>ᴀᴜᴋᴀᴀᴛ ᴍᴇɪɴ ʀᴇʜ ʟᴏᴅᴇ, ʏᴇ ꜱɪʀꜰ ꜱᴜᴅᴏ ᴋᴇ ʟɪʏᴇ ʜᴀɪ! 🖕</b></blockquote>", parse_mode=enums.ParseMode.HTML)
 
     text, reply_markup = build_help_page(1, user_id)
     await message.reply_text(text, reply_markup=reply_markup, parse_mode=enums.ParseMode.HTML)
@@ -121,13 +130,13 @@ async def help_pagination_callback(client, callback_query: CallbackQuery):
 
     # 🛑 Authorization: Jisne command diya, sirf wahi button daba sakta hai
     if clicker_id != original_user_id:
-        return await callback_query.answer("🖕 ᴀ ᴘ ɴ ᴇ  ᴄ ᴏ ᴍ ᴍ ᴀ ɴ ᴅ  ᴘ ᴇ  ᴄ ʟ ɪ ᴄ ᴋ  ᴋ ᴀ ʀ ɴ ᴀ  ʟ ᴏ ᴅ ᴇ !", show_alert=True)
+        return await callback_query.answer("🖕 ᴀᴘɴᴇ ᴄᴏᴍᴍᴀɴᴅ ᴘᴇ ᴄʟɪᴄᴋ ᴋᴀʀɴᴀ ʟᴏᴅᴇ!", show_alert=True)
 
     action = data[1]
 
     if action == "close":
         await callback_query.message.delete()
-        return await callback_query.answer("ꜱ ʏ ꜱ ᴛ ᴇ ᴍ  ᴄ ʟ ᴏ ꜱ ᴇ ᴅ ! 💥", show_alert=False)
+        return await callback_query.answer("ꜱʏꜱᴛᴇᴍ ᴄʟᴏꜱᴇᴅ! 💥", show_alert=False)
 
     page_num = int(data[2])
     text, reply_markup = build_help_page(page_num, original_user_id)

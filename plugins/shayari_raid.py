@@ -19,7 +19,7 @@ E_FLASH = "<emoji id='5345905193005371012'>⚡️</emoji>"
 E_LOCK  = "<emoji id='6115973347206501819'>🔒</emoji>"
 E_STOP  = "<emoji id='6131813839429177098'>🚫</emoji>"
 
-# ☠️ SRAID DATABASE COLLECTION (Naya Table) ☠️
+# ☠️ SRAID DATABASE COLLECTION ☠️
 sraid_db = db["sraid_ammo"] if db is not None else None
 
 # 🧠 IN-MEMORY STATES
@@ -39,11 +39,12 @@ async def check_sudo(user_id):
 # ==========================================
 async def fire_sraid(client, chat_id, text):
     try:
-        await client.send_message(chat_id, text)
+        # 🔥 HTML Parse mode taaki mention click ho sake
+        await client.send_message(chat_id, text, parse_mode=enums.ParseMode.HTML)
     except FloodWait as fw:
         await asyncio.sleep(fw.value)
     except (ChatWriteForbidden, UserRestricted):
-        SRAID_RUNNING[chat_id] = False # 🔥 Smart Mute Detection (Admin bypass)
+        SRAID_RUNNING[chat_id] = False # 🔥 Smart Mute Detection 
     except Exception:
         pass
 
@@ -102,13 +103,12 @@ async def stealth_sraid_catcher(client, message):
     if not await check_sudo(user_id):
         return
 
-    # Text ko silently DB mein save karega
     text_ammo = message.text
     if text_ammo:
         await sraid_db.insert_one({"text": text_ammo})
 
 # ==========================================
-# ☢️ 3. SRAID COMMAND (/sraid)
+# ☢️ 3. TARGETED SRAID COMMAND (/sraid)
 # ==========================================
 @Client.on_message(filters.command("sraid"))
 async def sraid_spam(client, message):
@@ -119,13 +119,33 @@ async def sraid_spam(client, message):
     if sraid_db is None:
         return await message.reply_text(f"<blockquote>{E_WARN} ᴅ ᴀ ᴛ ᴀ ʙ ᴀ ꜱ ᴇ  ᴇ ʀ ʀ ᴏ ʀ !</blockquote>", parse_mode=enums.ParseMode.HTML)
 
-    if len(message.command) < 2:
-        return await message.reply_text(f"<blockquote>{E_WARN} <b>ᴜ ꜱ ᴀ ɢ ᴇ :</b> <code>/sraid 10</code></blockquote>", parse_mode=enums.ParseMode.HTML)
+    args = message.command
+    target_user = None
+    count = 0
 
-    try:
-        count = int(message.command[1])
-    except:
-        return await message.reply_text(f"<blockquote>{E_DEVIL} ɪ ɴ ᴠ ᴀ ʟ ɪ ᴅ  ᴄ ᴏ ᴜ ɴ ᴛ !</blockquote>", parse_mode=enums.ParseMode.HTML)
+    # 🎯 CASE 1: REPLY TO A MESSAGE
+    if message.reply_to_message:
+        if len(args) < 2:
+            return await message.reply_text(f"<blockquote>{E_WARN} <b>ᴜ ꜱ ᴀ ɢ ᴇ :</b> <code>/sraid 10</code> (ᴏ ɴ  ʀ ᴇ ᴘ ʟ ʏ)</blockquote>", parse_mode=enums.ParseMode.HTML)
+        try:
+            count = int(args[1])
+            target_user = message.reply_to_message.from_user
+        except:
+            return await message.reply_text(f"<blockquote>{E_DEVIL} ɪ ɴ ᴠ ᴀ ʟ ɪ ᴅ  ᴄ ᴏ ᴜ ɴ ᴛ !</blockquote>", parse_mode=enums.ParseMode.HTML)
+
+    # 🎯 CASE 2: PROVIDED USERNAME OR ID
+    else:
+        if len(args) < 3:
+            return await message.reply_text(f"<blockquote>{E_WARN} <b>ᴜ ꜱ ᴀ ɢ ᴇ :</b> <code>/sraid 10 @username</code></blockquote>", parse_mode=enums.ParseMode.HTML)
+        try:
+            count = int(args[1])
+            target = args[2]
+            target_user = await client.get_users(target)
+        except Exception:
+            return await message.reply_text(f"<blockquote>{E_DEVIL} ᴜ ꜱ ᴇ ʀ  ɴ ᴀ ʜ ɪ ɴ  ᴍ ɪ ʟ ᴀ ! ꜱ ᴀ ʜ ɪ  ɪ ᴅ / ᴜ ꜱ ᴇ ʀ ɴ ᴀ ᴍ ᴇ  ᴅ ᴀ ʟ .</blockquote>", parse_mode=enums.ParseMode.HTML)
+
+    if not target_user:
+        return await message.reply_text(f"<blockquote>{E_DEVIL} ᴜ ꜱ ᴇ ʀ  ꜰ ᴏ ᴜ ɴ ᴅ  ɴ ᴀ ʜ ɪ ɴ  ʜ ᴜ ᴀ !</blockquote>", parse_mode=enums.ParseMode.HTML)
 
     # 🎲 Fetch all text ammo from DB
     all_ammo = await sraid_db.find().to_list(length=None)
@@ -136,10 +156,17 @@ async def sraid_spam(client, message):
     chat_id = message.chat.id
     SRAID_RUNNING[chat_id] = True # 🔥 Switch ON
 
+    # 🧲 Generate Target Mention (HTML)
+    user_mention = f"<a href='tg://user?id={target_user.id}'>{target_user.first_name}</a>"
+
     for _ in range(count):
         if not SRAID_RUNNING.get(chat_id, False): break # Check brake
         random_shayari = random.choice(all_ammo)["text"]
-        asyncio.create_task(fire_sraid(client, chat_id, random_shayari))
+        
+        # 💥 Inject Mention into Shayari
+        final_text = f"{user_mention} {random_shayari}"
+        
+        asyncio.create_task(fire_sraid(client, chat_id, final_text))
         await asyncio.sleep(0.05) # Micro-delay for stop command checking
 
     SRAID_RUNNING[chat_id] = False # Auto Switch OFF after loop

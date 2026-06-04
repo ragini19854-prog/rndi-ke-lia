@@ -1,5 +1,8 @@
 import os
 import asyncio
+import urllib.request
+import urllib.parse
+import json
 from pyrogram import Client, filters, enums
 from pyrogram.errors import FloodWait
 
@@ -24,7 +27,7 @@ def is_owner(user_id):
     return user_id == OWNER_ID
 
 # ==========================================
-# ☢️ 1. SET BOT NAME (/setbotname) - Bot API Supported ✅
+# ☢️ 1. SET BOT NAME (/setbotname) - DIRECT HTTP API 🔥
 # ==========================================
 @Client.on_message(filters.command("setbotname"))
 async def set_bot_name(client, message):
@@ -39,14 +42,28 @@ async def set_bot_name(client, message):
     msg = await message.reply_text(f"<blockquote>{E_FLASH} <b>ᴜ ᴘ ᴅ ᴀ ᴛ ɪ ɴ ɢ  ɴ ᴀ ᴍ ᴇ...</b></blockquote>", parse_mode=enums.ParseMode.HTML)
 
     try:
-        # 🔥 Uses Official Bot API Method
-        await client.set_bot_name(name=new_name)
-        await msg.edit_text(f"<blockquote>{E_CHECK} <b>ɴ ᴀ ᴀ ᴍ  ᴜ ᴘ ᴅ ᴀ ᴛ ᴇ ᴅ  ꜱ ᴜ ᴄ ᴄ ᴇ ꜱ ꜱ ꜰ ᴜ ʟ ʟ ʏ !</b></blockquote>", parse_mode=enums.ParseMode.HTML)
+        token = client.bot_token
+        if not token:
+            return await msg.edit_text(f"<blockquote>{E_DEVIL} <b>ᴇ ʀ ʀ ᴏ ʀ : ʙ ᴏ ᴛ  ᴛ ᴏ ᴋ ᴇ ɴ  ɴ ᴀ ʜ ɪ ɴ  ᴍ ɪ ʟ ᴀ !</b></blockquote>", parse_mode=enums.ParseMode.HTML)
+
+        # 🔥 Direct Request to Telegram Core Servers (No Pyrogram method used)
+        encoded_name = urllib.parse.quote(new_name)
+        url = f"https://api.telegram.org/bot{token}/setMyName?name={encoded_name}"
+        
+        request = urllib.request.urlopen(url)
+        response = json.loads(request.read().decode('utf-8'))
+        
+        if response.get("ok"):
+            await msg.edit_text(f"<blockquote>{E_CHECK} <b>ɴ ᴀ ᴀ ᴍ  ᴜ ᴘ ᴅ ᴀ ᴛ ᴇ ᴅ  ꜱ ᴜ ᴄ ᴄ ᴇ ꜱ ꜱ ꜰ ᴜ ʟ ʟ ʏ !</b></blockquote>", parse_mode=enums.ParseMode.HTML)
+        else:
+            error_desc = response.get('description', 'Unknown Error')
+            await msg.edit_text(f"<blockquote>{E_DEVIL} <b>ᴀ ᴘ ɪ  ᴇ ʀ ʀ ᴏ ʀ :</b> <code>{error_desc}</code></blockquote>", parse_mode=enums.ParseMode.HTML)
+
     except Exception as e:
         await msg.edit_text(f"<blockquote>{E_DEVIL} <b>ᴇ ʀ ʀ ᴏ ʀ :</b> <code>{e}</code></blockquote>", parse_mode=enums.ParseMode.HTML)
 
 # ==========================================
-# ☢️ 2. SET BOT BIO (/setbotbio) - Bot API Supported ✅
+# ☢️ 2. SET BOT BIO (/setbotbio) - DIRECT HTTP API 🔥
 # ==========================================
 @Client.on_message(filters.command("setbotbio"))
 async def set_bot_bio(client, message):
@@ -59,21 +76,34 @@ async def set_bot_bio(client, message):
 
     new_bio = message.text.split(None, 1)[1]
     
-    # ⚠️ Bot API Short Description Limit is 120 Characters
     if len(new_bio) > 120:
         return await message.reply_text(f"<blockquote>{E_WARN} <b>ʙ ɪ ᴏ  ʟ ɪ ᴍ ɪ ᴛ :</b> ꜱ ɪ ʀ ꜰ  120  ᴄ ʜ ᴀ ʀ ᴀ ᴄ ᴛ ᴇ ʀ ꜱ  ᴀ ʟ ʟ ᴏ ᴡ ᴇ ᴅ  ʜ ᴀ ɪ ɴ !</blockquote>", parse_mode=enums.ParseMode.HTML)
 
     msg = await message.reply_text(f"<blockquote>{E_FLASH} <b>ᴜ ᴘ ᴅ ᴀ ᴛ ɪ ɴ ɢ  ʙ ɪ ᴏ...</b></blockquote>", parse_mode=enums.ParseMode.HTML)
 
     try:
-        # 🔥 Uses Official Bot API Method for "About" section
-        await client.set_bot_short_description(short_description=new_bio)
-        await msg.edit_text(f"<blockquote>{E_CHECK} <b>ʙ ɪ ᴏ  ᴜ ᴘ ᴅ ᴀ ᴛ ᴇ ᴅ  ꜱ ᴜ ᴄ ᴄ ᴇ ꜱ ꜱ ꜰ ᴜ ʟ ʟ ʏ !</b></blockquote>", parse_mode=enums.ParseMode.HTML)
+        token = client.bot_token
+        if not token:
+            return await msg.edit_text(f"<blockquote>{E_DEVIL} <b>ᴇ ʀ ʀ ᴏ ʀ : ʙ ᴏ ᴛ  ᴛ ᴏ ᴋ ᴇ ɴ  ɴ ᴀ ʜ ɪ ɴ  ᴍ ɪ ʟ ᴀ !</b></blockquote>", parse_mode=enums.ParseMode.HTML)
+
+        # 🔥 Direct Request to Telegram Core Servers (No Pyrogram method used)
+        encoded_bio = urllib.parse.quote(new_bio)
+        url = f"https://api.telegram.org/bot{token}/setMyShortDescription?short_description={encoded_bio}"
+        
+        request = urllib.request.urlopen(url)
+        response = json.loads(request.read().decode('utf-8'))
+        
+        if response.get("ok"):
+            await msg.edit_text(f"<blockquote>{E_CHECK} <b>ʙ ɪ ᴏ  ᴜ ᴘ ᴅ ᴀ ᴛ ᴇ ᴅ  ꜱ ᴜ ᴄ ᴄ ᴇ ꜱ ꜱ ꜰ ᴜ ʟ ʟ ʏ !</b></blockquote>", parse_mode=enums.ParseMode.HTML)
+        else:
+            error_desc = response.get('description', 'Unknown Error')
+            await msg.edit_text(f"<blockquote>{E_DEVIL} <b>ᴀ ᴘ ɪ  ᴇ ʀ ʀ ᴏ ʀ :</b> <code>{error_desc}</code></blockquote>", parse_mode=enums.ParseMode.HTML)
+
     except Exception as e:
         await msg.edit_text(f"<blockquote>{E_DEVIL} <b>ᴇ ʀ ʀ ᴏ ʀ :</b> <code>{e}</code></blockquote>", parse_mode=enums.ParseMode.HTML)
 
 # ==========================================
-# ☢️ 3. SET BOT PFP (/setbotpfp) - Strictly BotFather / Userbot
+# ☢️ 3. SET BOT PFP (/setbotpfp) - WORKING METHOD ✅
 # ==========================================
 @Client.on_message(filters.command("setbotpfp"))
 async def set_bot_pfp(client, message):
@@ -91,14 +121,15 @@ async def set_bot_pfp(client, message):
         photo_path = await message.reply_to_message.download()
         await msg.edit_text(f"<blockquote>{E_FLASH} <b>ᴜ ᴘ ʟ ᴏ ᴀ ᴅ ɪ ɴ ɢ  ɴ ᴇ ᴡ  ᴘ ꜰ ᴘ...</b></blockquote>", parse_mode=enums.ParseMode.HTML)
         
-        # Userbot Method (Will fail on pure Bot Token)
         await client.set_profile_photo(photo=photo_path)
         
+        # Cleanup
         if os.path.exists(photo_path):
             os.remove(photo_path)
             
         await msg.edit_text(f"<blockquote>{E_CHECK} <b>ᴘ ʀ ᴏ ꜰ ɪ ʟ ᴇ  ᴘ ɪ ᴄ  ᴜ ᴘ ᴅ ᴀ ᴛ ᴇ ᴅ  ꜱ ᴜ ᴄ ᴄ ᴇ ꜱ ꜱ ꜰ ᴜ ʟ ʟ ʏ !</b></blockquote>", parse_mode=enums.ParseMode.HTML)
         
-    except Exception:
-        # 🔥 Catching the token limitation smartly
-        await msg.edit_text(f"<blockquote>{E_WARN} <b>ᴛ ᴇ ʟ ᴇ ɢ ʀ ᴀ ᴍ  ꜱ ᴇ ᴄ ᴜ ʀ ɪ ᴛ ʏ :</b> ʙ ᴏ ᴛ  ᴛ ᴏ ᴋ ᴇ ɴ  ᴀ ᴘ ɴ ɪ  ᴅ ᴘ  x ᴜ ᴅ  ᴄ ʜ ᴀ ɴ ɢ ᴇ  ɴ ᴀ ʜ ɪ ɴ  ᴋ ᴀ ʀ  ꜱ ᴀ ᴋ ᴛ ᴀ ! ᴘ ꜰ ᴘ  ᴋ ᴇ  ʟ ɪ ʏ ᴇ  @BotFather ᴋ ᴀ  ᴜ ꜱ ᴇ  ᴋ ᴀ ʀ ᴏ .</blockquote>", parse_mode=enums.ParseMode.HTML)
+    except FloodWait as fw:
+        await msg.edit_text(f"<blockquote>{E_DEVIL} <b>ꜰ ʟ ᴏ ᴏ ᴅ ᴡ ᴀ ɪ ᴛ :</b> {fw.value} ꜱ ᴇ ᴄ ᴏ ɴ ᴅ ꜱ  ᴡ ᴀ ɪ ᴛ  ᴋ ᴀ ʀ ᴏ !</blockquote>", parse_mode=enums.ParseMode.HTML)
+    except Exception as e:
+        await msg.edit_text(f"<blockquote>{E_DEVIL} <b>ᴇ ʀ ʀ ᴏ ʀ :</b> <code>{e}</code></blockquote>", parse_mode=enums.ParseMode.HTML)

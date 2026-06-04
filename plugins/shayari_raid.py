@@ -1,5 +1,6 @@
 import asyncio
 import random
+import re
 from pyrogram import Client, filters, enums
 from pyrogram.errors import FloodWait, ChatWriteForbidden, UserRestricted
 
@@ -24,7 +25,7 @@ sraid_db = db["sraid_ammo"] if db is not None else None
 
 # 🧠 IN-MEMORY STATES
 ADD_SRAID_STATE = {}
-SRAID_RUNNING = {} # 🔥 Emergency Brake Switch
+SRAID_RUNNING = {} 
 
 # ==========================================
 # 🛡️ ꜱᴜᴅᴏ ᴄʜᴇᴄᴋᴇʀ ꜰᴜɴᴄᴛɪᴏɴ 
@@ -39,12 +40,11 @@ async def check_sudo(user_id):
 # ==========================================
 async def fire_sraid(client, chat_id, text):
     try:
-        # 🔥 HTML Parse mode taaki mention click ho sake
         await client.send_message(chat_id, text, parse_mode=enums.ParseMode.HTML)
     except FloodWait as fw:
         await asyncio.sleep(fw.value)
     except (ChatWriteForbidden, UserRestricted):
-        SRAID_RUNNING[chat_id] = False # 🔥 Smart Mute Detection 
+        SRAID_RUNNING[chat_id] = False 
     except Exception:
         pass
 
@@ -87,13 +87,13 @@ async def toggle_sraid_loader(client, message):
     elif state == "off":
         ADD_SRAID_STATE[user_id] = False
         count = await sraid_db.count_documents({})
-        await message.reply_text(f"<blockquote>{E_FLASH} <b>ꜱ ʀ ᴀ ɪ ᴅ  ʟ ᴏ ᴀ ᴅ ᴇ ʀ  ᴏ ꜰ ꜰ !</b>\nᴛ ᴏ ᴛ ᴀ ʟ  ᴀ ᴍ ᴍ ᴏ : <b>{count}</b></blockquote>", parse_mode=enums.ParseMode.HTML)
+        await message.reply_text(f"<blockquote>{E_FLASH} <b><b>ꜱ ʀ ᴀ ɪ ᴅ  ʟ ᴏ ᴀ ᴅ ᴇ ʀ  ᴏ ꜰ ꜰ !</b></b>\nᴛ ᴏ ᴛ ᴀ ʟ  ᴀ ᴍ ᴍ ᴏ : <b>{count}</b></blockquote>", parse_mode=enums.ParseMode.HTML)
     elif state == "clear":
         await sraid_db.delete_many({})
         await message.reply_text(f"<blockquote>{E_CHECK} ᴀ ʟ ʟ  ꜱ ʀ ᴀ ɪ ᴅ  ᴀ ᴍ ᴍ ᴏ  ᴄ ʟ ᴇ ᴀ ʀ ᴇ ᴅ !</blockquote>", parse_mode=enums.ParseMode.HTML)
 
 # ==========================================
-# 🧲 2. STEALTH TEXT CATCHER (ZERO-REPLY)
+# 🧲 2. ADVANCED LINE SPLITTER CATCHER (ZERO-REPLY)
 # ==========================================
 @Client.on_message(filters.text & ~filters.command(["addsraid", "sraid", "stopsraid", "spam", "pspam"]))
 async def stealth_sraid_catcher(client, message):
@@ -103,9 +103,24 @@ async def stealth_sraid_catcher(client, message):
     if not await check_sudo(user_id):
         return
 
-    text_ammo = message.text
-    if text_ammo:
-        await sraid_db.insert_one({"text": text_ammo})
+    # 🔥 Bulk Text Split Logic
+    raw_text = message.text
+    lines = raw_text.split('\n')
+    
+    ammo_to_insert = []
+    for line in lines:
+        clean_line = line.strip()
+        if clean_line:
+            # 🧹 Numbers or indexing clean karne ke liye RegEx
+            clean_line = re.sub(r'^\d+\s*\.\s*', '', clean_line).strip()
+            if clean_line:
+                ammo_to_insert.append({"text": clean_line})
+
+    if ammo_to_insert:
+        if len(ammo_to_insert) == 1:
+            await sraid_db.insert_one(ammo_to_insert[0])
+        else:
+            await sraid_db.insert_many(ammo_to_insert)
 
 # ==========================================
 # ☢️ 3. TARGETED SRAID COMMAND (/sraid)
@@ -123,7 +138,7 @@ async def sraid_spam(client, message):
     target_user = None
     count = 0
 
-    # 🎯 CASE 1: REPLY TO A MESSAGE
+    # 🎯 TARGET DETECTION (Reply vs Username/ID)
     if message.reply_to_message:
         if len(args) < 2:
             return await message.reply_text(f"<blockquote>{E_WARN} <b>ᴜ ꜱ ᴀ ɢ ᴇ :</b> <code>/sraid 10</code> (ᴏ ɴ  ʀ ᴇ ᴘ ʟ ʏ)</blockquote>", parse_mode=enums.ParseMode.HTML)
@@ -132,8 +147,6 @@ async def sraid_spam(client, message):
             target_user = message.reply_to_message.from_user
         except:
             return await message.reply_text(f"<blockquote>{E_DEVIL} ɪ ɴ ᴠ ᴀ ʟ ɪ ᴅ  ᴄ ᴏ ᴜ ɴ ᴛ !</blockquote>", parse_mode=enums.ParseMode.HTML)
-
-    # 🎯 CASE 2: PROVIDED USERNAME OR ID
     else:
         if len(args) < 3:
             return await message.reply_text(f"<blockquote>{E_WARN} <b>ᴜ ꜱ ᴀ ɢ ᴇ :</b> <code>/sraid 10 @username</code></blockquote>", parse_mode=enums.ParseMode.HTML)
@@ -147,26 +160,23 @@ async def sraid_spam(client, message):
     if not target_user:
         return await message.reply_text(f"<blockquote>{E_DEVIL} ᴜ ꜱ ᴇ ʀ  ꜰ ᴏ ᴜ ɴ ᴅ  ɴ ᴀ ʜ ɪ ɴ  ʜ ᴜ ᴀ !</blockquote>", parse_mode=enums.ParseMode.HTML)
 
-    # 🎲 Fetch all text ammo from DB
     all_ammo = await sraid_db.find().to_list(length=None)
     
     if not all_ammo:
         return await message.reply_text(f"<blockquote>{E_DEVIL} ᴅ ᴀ ᴛ ᴀ ʙ ᴀ ꜱ ᴇ  ᴇ ᴍ ᴘ ᴛ ʏ !  ᴘ ᴇ ʜ ʟ ᴇ  <code>/addsraid on</code>  ᴋ ᴀ ʀ ᴋ ᴇ  ᴍ ᴀ ᴀ ʟ  ᴅ ᴀ ʟ !</blockquote>", parse_mode=enums.ParseMode.HTML)
 
     chat_id = message.chat.id
-    SRAID_RUNNING[chat_id] = True # 🔥 Switch ON
+    SRAID_RUNNING[chat_id] = True 
 
-    # 🧲 Generate Target Mention (HTML)
+    # 🧲 Generate Target Mention
     user_mention = f"<a href='tg://user?id={target_user.id}'>{target_user.first_name}</a>"
 
     for _ in range(count):
-        if not SRAID_RUNNING.get(chat_id, False): break # Check brake
+        if not SRAID_RUNNING.get(chat_id, False): break 
         random_shayari = random.choice(all_ammo)["text"]
         
-        # 💥 Inject Mention into Shayari
         final_text = f"{user_mention} {random_shayari}"
-        
         asyncio.create_task(fire_sraid(client, chat_id, final_text))
-        await asyncio.sleep(0.05) # Micro-delay for stop command checking
+        await asyncio.sleep(0.05) 
 
-    SRAID_RUNNING[chat_id] = False # Auto Switch OFF after loop
+    SRAID_RUNNING[chat_id] = False 

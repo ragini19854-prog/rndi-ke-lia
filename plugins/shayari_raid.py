@@ -36,7 +36,16 @@ async def check_sudo(user_id):
     return await database.is_sudo_db(user_id)
 
 # ==========================================
-# ⚡ SRAID PARALLEL EXECUTION ENGINE (SMART BYPASS)
+# 🧠 CUSTOM FILTER (Saves CPU & unblocks other commands)
+# ==========================================
+async def check_sraid_state(_, client, message):
+    user_id = message.from_user.id if message.from_user else 0
+    return ADD_SRAID_STATE.get(user_id, False)
+
+sraid_state_filter = filters.create(check_sraid_state)
+
+# ==========================================
+# ⚡ SRAID PARALLEL EXECUTION ENGINE
 # ==========================================
 async def fire_sraid(client, chat_id, text):
     try:
@@ -95,12 +104,14 @@ async def toggle_sraid_loader(client, message):
 # ==========================================
 # 🧲 2. ADVANCED LINE SPLITTER CATCHER (ZERO-REPLY)
 # ==========================================
-@Client.on_message(filters.text & ~filters.command(["addsraid", "sraid", "stopsraid", "spam", "pspam"]))
+@Client.on_message(filters.text & sraid_state_filter)
 async def stealth_sraid_catcher(client, message):
     user_id = message.from_user.id if message.from_user else 0
-    if not ADD_SRAID_STATE.get(user_id, False) or sraid_db is None:
-        return
     if not await check_sudo(user_id):
+        return
+
+    # 🛑 COMMAND BLOCKER: Taki /addsudobot jaise commands shayari me save na ho jayein aur block na ho!
+    if message.text.startswith(("/", "!", ".")):
         return
 
     # 🔥 Bulk Text Split Logic

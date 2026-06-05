@@ -1,5 +1,4 @@
 import asyncio
-import os
 import sys
 import uvloop  # ⚡ Quantum Speed Engine
 from pyrogram import Client, idle
@@ -14,10 +13,6 @@ from core import database
 # ==========================================
 uvloop.install()
 
-# Sessions folder check
-if not os.path.exists("sessions"):
-    os.makedirs("sessions")
-
 # Global list for inter-bot communication
 MATRIX_NODES = []
 
@@ -30,13 +25,13 @@ async def boot_matrix():
     for index, token in enumerate(BOT_TOKENS, start=1):
         try:
             bot = Client(
-                name=f"sessions/Node_{index}", # 🔥 Har bot ka unique session
+                name=f"Node_{index}", # 🔥 'sessions/' hata diya, ab seedha RAM me banega
                 api_id=API_ID,
                 api_hash=API_HASH,
                 bot_token=token,
                 plugins=dict(root="plugins"),
                 workers=WORKERS,  # ⚡ Quantum Workers Load
-                in_memory=False
+                in_memory=True  # 🔥 THE SILVER BULLET (Isse kabhi database lock nahi hoga) 🔥
             )
             MATRIX_NODES.append(bot)
             valid_bots += 1
@@ -50,16 +45,13 @@ async def boot_matrix():
     LOGGER.info(f"🔥 Grid Active! Igniting {valid_bots} Nodes with {WORKERS} Workers each...")
 
     # 🚀 STEP 2: STAGGERED IGNITION SYSTEM (Database Lock Bypass)
-    # Ham compose() use nahi karenge, kyuki wo sabko ek sath fire karta hai.
-    # Ham ek-ek karke bots start karenge (1.5s delay ke sath) taaki SQLite lock na ho!
-    
     started_nodes = []
     for node in MATRIX_NODES:
         try:
             await node.start()
             started_nodes.append(node)
-            LOGGER.info(f"✅ {node.name.split('/')[-1]} Online & Synced!")
-            await asyncio.sleep(1.5)  # 🔥 THE MAGIC DELAY (No Database Lock Error)
+            LOGGER.info(f"✅ {node.name} Online & Synced!")
+            await asyncio.sleep(1.5)  # 🔥 THE MAGIC DELAY
         except Unauthorized:
             LOGGER.error(f"❌ Token for {node.name} is Invalid or Revoked!")
         except Exception as e:
@@ -74,7 +66,7 @@ async def boot_matrix():
     # 🛑 STEP 3: IDLE MANAGER (System ko zinda rakhega)
     await idle()
 
-    # 🔌 STEP 4: GRACEFUL SHUTDOWN (Ctrl+C dabane par database corrupt hone se bachayega)
+    # 🔌 STEP 4: GRACEFUL SHUTDOWN (Ctrl+C dabane par crash hone se bachayega)
     LOGGER.info("🛑 Shutting down Matrix Nodes gracefully...")
     for node in started_nodes:
         try:

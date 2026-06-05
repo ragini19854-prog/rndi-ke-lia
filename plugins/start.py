@@ -144,10 +144,10 @@ def is_sudo(_, __, message):
 
 sudo_filter = filters.create(is_sudo)
 
-@Client.on_message(filters.command("setstart") & sudo_filter)
+@Client.on_message(filters.command("setbotstart") & sudo_filter)
 async def set_start_media_cmd(client, message):
     if not message.reply_to_message:
-        return await message.reply_text("⚠️ <b>ᴇʀʀᴏʀ:</b> <code>ᴋɪꜱɪ ᴩʜᴏᴛᴏ, ᴠɪᴅᴇᴏ, ɢɪꜰ ʏᴀ ꜱᴛɪᴄᴋᴇʀ ᴩᴇ ʀᴇᴩʟʏ ᴋᴀʀᴋᴇ /setstart ʟɪᴋʜᴏ!</code>", parse_mode=enums.ParseMode.HTML)
+        return await message.reply_text("⚠️ <b>ᴇʀʀᴏʀ:</b> <code>ᴋɪꜱɪ ᴩʜᴏᴛᴏ, ᴠɪᴅᴇᴏ, ɢɪꜰ ʏᴀ ꜱᴛɪᴄᴋᴇʀ ᴩᴇ ʀᴇᴩʟʏ ᴋᴀʀᴋᴇ /setbotstart ʟɪᴋʜᴏ!</code>", parse_mode=enums.ParseMode.HTML)
 
     reply = message.reply_to_message
     file_id, media_type = None, None

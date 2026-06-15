@@ -2,7 +2,7 @@ import os
 import logging
 from dotenv import load_dotenv
 
-# ⚡ YUKI MATRIX ULTIMATE CONFIG ENGINE ⚡
+# ⚡ MADARA MATRIX ULTIMATE CONFIG ENGINE ⚡
 load_dotenv()
 
 # ==========================================
@@ -19,10 +19,10 @@ LOGGER = logging.getLogger("YUKI_MATRIX")
 # ==========================================
 # ☠️ CORE CREDENTIALS
 # ==========================================
-API_ID = int(os.getenv("API_ID", "37272966"))
-API_HASH = os.getenv("API_HASH", "b5b140765f083cce6022c58dfbd468a0")
+API_ID = int(os.getenv("API_ID", "36522229"))
+API_HASH = os.getenv("API_HASH", "7f27443617af60bcb0e23f7147d3eaf9")
 MONGO_DB_URI = os.getenv("MONGO_DB_URI", "")
-OWNER_ID = int(os.getenv("OWNER_ID", "8610232184"))
+OWNER_ID = int(os.getenv("OWNER_ID", "2145828547"))
 
 # ==========================================
 # 👑 PERMISSIONS & CONTROL (SUDO & BLACKLIST)
@@ -56,7 +56,7 @@ COMMAND_PREFIXES = os.getenv("COMMAND_PREFIXES", "/ . !").split()
 WORKERS = int(os.getenv("WORKERS", "32"))
 
 # Default Start/Alive Image
-ALIVE_IMG = os.getenv("ALIVE_IMG", "https://telegra.ph/file/82b13eddfc5eb944b76e2.jpg")
+ALIVE_IMG = os.getenv("ALIVE_IMG", "https://i.ibb.co/YFf0FKw3/CTELBTl-F.jpg")
 
 # ==========================================
 # 💣 DESTRUCTION / SPAM SETTINGS

@@ -34,7 +34,7 @@ def generate_start_panel(user_name: str, user_id: int, ping_time: float) -> str:
     cpu_bar = make_bar(cpu_usage)
     ram_bar = make_bar(ram_usage)
     
-    return f"""<blockquote><emoji id="5039816072253932764">💎</emoji> <b>ᴍᴏɴꜱᴛᴇʀ ꜱᴩᴀᴍ ʙᴏᴛ</b> <emoji id="5039816072253932764">💎</emoji>
+    return f"""<blockquote><emoji id="5039816072253932764">💎</emoji> <b>ᴍᴀᴅᴀʀᴀ ꜱᴩᴀᴍ ʙᴏᴛ</b> <emoji id="5039816072253932764">💎</emoji>
 ━━━━━━━━━━━━━━━━━━
 ╭── <emoji id="6118612596019958861">👑</emoji> <b>ᴜꜱᴇʀ ɪɴꜰᴏ</b>
 │   ├── ᴍᴀꜱᴛᴇʀ: <code>{user_name}</code>
@@ -48,18 +48,18 @@ def generate_start_panel(user_name: str, user_id: int, ping_time: float) -> str:
     ├── ᴄᴩᴜ: {cpu_bar} <code>{cpu_usage}%</code>
     ╰── ʀᴀᴍ: {ram_bar} <code>{ram_usage}%</code>
 ━━━━━━━━━━━━━━━━━━
-<emoji id="5042209657527993345">💀</emoji> [ ᴍᴏɴꜱᴛᴇʀ ꜱᴩᴀᴍ ʙᴏᴛ : ᴏɴʟɪɴᴇ ]</blockquote>"""
+<emoji id="5042209657527993345">💀</emoji> [ ᴍᴀᴅᴀʀᴀ ꜱᴩᴀᴍ ʙᴏᴛ : ᴏɴʟɪɴᴇ ]</blockquote>"""
 
 # 🎛️ Default Keyboard with Refresh Button
 def get_start_keyboard():
     return InlineKeyboardMarkup([
         [
-            InlineKeyboardButton("👑 ᴏᴡɴᴇʀ", url="https://t.me/FUCKED_BY_MONSTER"),
-            InlineKeyboardButton("💀 ᴜꜱᴇʀʙᴏᴛ", url="https://t.me/ANU_XX_USERBOT")
+            InlineKeyboardButton("👑 ᴏᴡɴᴇʀ", url="https://t.me/Egoist_Destroyer"),
+            InlineKeyboardButton("💀 ᴍᴜꜱɪᴄ ʙᴏᴛ", url="http://t.me/HINATA_MUSIC_PLAYER_BOT")
         ],
         [
-            InlineKeyboardButton("🔥 ᴄʜᴀɴɴᴇʟ", url="https://t.me/USERBOTS_TAKES"),
-            InlineKeyboardButton("💬 ɢʀᴏᴜᴩ", url="https://t.me/yukiupdatesq")
+            InlineKeyboardButton("🔥 ᴄʜᴀɴɴᴇʟ", url="https://t.me/EDITING_PFP"),
+            InlineKeyboardButton("💬 ɢʀᴏᴜᴩ", url="https://t.me/+w5QsmWX0sPg3Yzk1")
         ],
         [
             InlineKeyboardButton("🔄 ʀᴇꜰʀᴇꜱʜ ꜱᴛᴀᴛꜱ", callback_data="refresh_stats")
@@ -163,4 +163,4 @@ async def set_start_media_cmd(client, message):
     await database.set_start_media(me.id, file_id, media_type)
     
     LOGGER.info(f"🖼️ User {message.from_user.id} updated Start Media for Node: {me.first_name}")
-    await message.reply_text(f"✅ <b>ᴍᴏɴꜱᴛᴇʀ ᴍᴇᴅɪᴀ ꜱᴇᴛ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜰᴏʀ</b> <code>{me.first_name}</code>!\n<code>ᴀʙ /start ᴋᴀʀᴋᴇ ᴄʜᴇᴄᴋ ᴋᴀʀ ʟᴏ.</code>", parse_mode=enums.ParseMode.HTML)
+    await message.reply_text(f"✅ <b>ᴍᴀᴅᴀʀᴀ ᴍᴇᴅɪᴀ ꜱᴇᴛ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜰᴏʀ</b> <code>{me.first_name}</code>!\n<code>ᴀʙ /start ᴋᴀʀᴋᴇ ᴄʜᴇᴄᴋ ᴋᴀʀ ʟᴏ.</code>", parse_mode=enums.ParseMode.HTML)

@@ -54,7 +54,7 @@ async def add_sudo(client, message):
 │   ├── ɴᴀᴍᴇ: <code>{user.first_name}</code>
 │   ╰── ᴜɪᴅ: <code>{user.id}</code>
 │
-╰── <emoji id="5039793437776282663">✅</emoji> <b>ꜱᴛᴀᴛᴜꜱ:</b> <code>ᴀᴅᴅᴇᴅ ᴛᴏ ᴍᴀᴛʀɪx ꜱᴜᴅᴏ!</code>
+╰── <emoji id="5039793437776282663">✅</emoji> <b>ꜱᴛᴀᴛᴜꜱ:</b> <code>ᴀᴅᴅᴇᴅ ᴛᴏ ᴍᴀᴅᴀʀᴀ ꜱɪx ᴘᴀᴛʜꜱ ꜱᴜᴅᴏ!</code>
 ━━━━━━━━━━━━━━━━━━
 <emoji id="5042209657527993345">💀</emoji> [ ʀᴏᴏᴛ ᴍᴀɪɴꜰʀᴀᴍᴇ : ᴜᴩᴅᴀᴛᴇᴅ ]</blockquote>"""
     
@@ -83,7 +83,7 @@ async def del_sudo(client, message):
 │   ├── ɴᴀᴍᴇ: <code>{user.first_name}</code>
 │   ╰── ᴜɪᴅ: <code>{user.id}</code>
 │
-╰── <emoji id="6131813839429177098">🚫</emoji> <b>ꜱᴛᴀᴛᴜꜱ:</b> <code>ʀᴇᴍᴏᴠᴇᴅ ꜰʀᴏᴍ ᴍᴀᴛʀɪx!</code>
+╰── <emoji id="6131813839429177098">🚫</emoji> <b>ꜱᴛᴀᴛᴜꜱ:</b> <code>ʀᴇᴍᴏᴠᴇᴅ ꜰʀᴏᴍ ᴍᴀᴅᴀʀᴀ ꜱɪx ᴘᴀᴛʜꜱ!</code>
 ━━━━━━━━━━━━━━━━━━
 <emoji id="5042209657527993345">💀</emoji> [ ʀᴏᴏᴛ ᴍᴀɪɴꜰʀᴀᴍᴇ : ᴜᴩᴅᴀᴛᴇᴅ ]</blockquote>"""
     
@@ -102,7 +102,7 @@ async def sudo_list(client, message):
 
     msg = await message.reply_text("<blockquote><emoji id=\"5199785165735367039\">⚡️</emoji> <code>ꜰᴇᴛᴄʜɪɴɢ ꜱᴜᴅᴏ ɴᴏᴅᴇꜱ...</code></blockquote>", parse_mode=enums.ParseMode.HTML)
     
-    list_txt = f"<blockquote><emoji id=\"5039816072253932764\">💎</emoji> <b>ᴍᴀᴛʀɪx ꜱᴜᴅᴏ ɴᴏᴅᴇꜱ</b> <emoji id=\"5039816072253932764\">💎</emoji>\n━━━━━━━━━━━━━━━━━━\n"
+    list_txt = f"<blockquote><emoji id=\"5039816072253932764\">💎</emoji> <b>ᴍᴀᴅᴀʀᴀ ꜱɪx ᴘᴀᴛʜꜱ ꜱᴜᴅᴏ ɴᴏᴅᴇꜱ</b> <emoji id=\"5039816072253932764\">💎</emoji>\n━━━━━━━━━━━━━━━━━━\n"
     
     count = 1
     for user_id in sudoers:

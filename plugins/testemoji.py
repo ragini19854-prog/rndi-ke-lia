@@ -38,4 +38,4 @@ async def emoji_test_plugin(client, message):
 
 @Client.on_callback_query(filters.regex(r"^test_"))
 async def test_callback(client, callback_query):
-    await callback_query.answer("☠️ ᴍᴏɴꜱᴛᴇʀ ᴇᴍᴏᴊɪ ᴛᴇꜱᴛ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟ! 🔥", show_alert=True)
+    await callback_query.answer("☠️ ᴍᴀᴅᴀʀᴀ ꜱɪx ᴘᴀᴛʜꜱ ᴇᴍᴏᴊɪ ᴛᴇꜱᴛ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟ! 🔥", show_alert=True)

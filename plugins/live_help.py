@@ -70,8 +70,8 @@ def build_help_page(page_num, user_id):
     page_cmds = cmds[start_idx:end_idx]
 
     # 🎨 MONSTER BRANDING & TREE STYLE FORMATTING
-    text = f"<blockquote><b>╭━━ [ ᴍᴏɴꜱᴛᴇʀ ᴄᴏᴍᴍᴀɴᴅ ᴠᴀᴜʟᴛ ] ━━</b>\n"
-    text += f"<b>├ ᴏᴡɴᴇʀ ⇛</b> ᴀɴᴜ ᴍᴀᴛʀɪx {E_CROWN}\n"
+    text = f"<blockquote><b>╭━━ [ ᴍᴀᴅᴀʀᴀ ꜱɪx ᴘᴀᴛʜꜱ ᴠᴀᴜʟᴛ ] ━━</b>\n"
+    text += f"<b>├ ᴏᴡɴᴇʀ ⇛</b> ᴍᴀᴅᴀʀᴀ ꜱɪx ᴘᴀᴛʜꜱ {E_CROWN}\n"
     text += f"<b>├ ꜱᴛᴀᴛᴜꜱ ⇛</b> ᴏɴʟɪɴᴇ ⚡\n"
     text += f"<b>╰━━━━━━━━━━━━━━━━━━━━</b>\n\n"
     
@@ -84,7 +84,7 @@ def build_help_page(page_num, user_id):
 
     # Footer
     text += f"\n<b>╭━━ [ ᴘᴀɢᴇ : {page_num} / {total_pages} ] ━━</b>\n"
-    text += f"<b>╰ ⇛</b> <i>ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴏɴꜱᴛᴇʀ ᴇɴɢɪɴᴇ</i> 💀</blockquote>"
+    text += f"<b>╰ ⇛</b> <i>ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴀᴅᴀʀᴀ ᴇɴɢɪɴᴇ</i> 💀</blockquote>"
 
     # 🎛️ BUTTONS LOGIC (Clean Small Caps)
     buttons = []

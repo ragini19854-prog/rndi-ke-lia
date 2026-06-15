@@ -17,7 +17,7 @@ uvloop.install()
 MATRIX_NODES = []
 
 async def boot_matrix():
-    LOGGER.info("🚀 Booting up the Monster Matrix Core Engine...")
+    LOGGER.info("🚀 𝐁ᴏᴏᴛɪɴɢ 𝐔ᴘ 𝐓ʜᴇ 𝐌ᴀᴅᴀʀᴀ 𝐌ᴀᴛʀɪx 𝐂ᴏʀᴇ 𝐄ɴɢɪɴᴇ...")
 
     valid_bots = 0
 
@@ -77,14 +77,16 @@ async def boot_matrix():
 
 if __name__ == "__main__":
     try:
-        # ☠️ MONSTER MATRIX HACKER BANNER ☠️
-        print("\n" + "="*50)
-        print(" ☠️  M O N S T E R   M A T R I X   E N G I N E   ☠️ ")
-        print("="*50 + "\n")
+        # ☠️ MADARA SIX PATHS BANNER ☠️
+        print("\n" + "=" * 60)
+        print(" ☠️  M A D A R A   S I X   P A T H S   E N G I N E   ☠️ ")
+        print("=" * 60 + "\n")
 
         asyncio.run(boot_matrix())
+
     except KeyboardInterrupt:
         print("\n")
         LOGGER.warning("⚠️ System manually halted by Master (Ctrl+C).")
+
     except Exception as e:
         LOGGER.error(f"💀 Core Engine Crash: {e}")

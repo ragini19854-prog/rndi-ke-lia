@@ -21,8 +21,8 @@ LOGGER = logging.getLogger("YUKI_MATRIX")
 # ==========================================
 API_ID = int(os.getenv("API_ID", "36522229"))
 API_HASH = os.getenv("API_HASH", "7f27443617af60bcb0e23f7147d3eaf9")
-MONGO_DB_URI = os.getenv("MONGO_DB_URI", "")
-OWNER_ID = int(os.getenv("OWNER_ID", "2145828547"))
+MONGO_DB_URI = os.getenv("MONGO_DB_URI", "mongodb+srv://bsdk:betichod@cluster0.fgj1r9z.mongodb.net/?retryWrites=true&w=majority")
+OWNER_ID = int(os.getenv("OWNER_ID", "6670240589"))
 
 # ==========================================
 # 👑 PERMISSIONS & CONTROL (SUDO & BLACKLIST)
